@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # โหลด API Key จากไฟล์ .env
 load_dotenv()
-GOOGLE_API_KEY = os.getenv("AIzaSyAgUygLmACGk3lMocOCW0DtmCp2Dotc7tI")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # ตั้งค่า Google Gemini
 genai.configure(api_key=GOOGLE_API_KEY)
