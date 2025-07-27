@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางคะแนน | ลีกเฝรั่งบ้านนอก</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="nav-branding">🏆 ลีกฝรั่งบ้านนอก</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link active">ตารางคะแนน</a></li>
+                <li class="nav-item"><a href="matches.html" class="nav-link">ผลการแข่ง</a></li>
+                <li class="nav-item"><a href="teams.html" class="nav-link">สถิติทีม</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>ตารางคะแนน</h1>
+        <table class="league-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>ทีม</th><th>แข่ง</th><th>ชนะ</th><th>เสมอ</th><th>แพ้</th><th>ได้</th><th>เสีย</th><th>+/-</th><th>คะแนน</th>
+                </tr>
+            </thead>
+            <tbody id="league-table-body"></tbody>
+        </table>
+
+        <div class="card">
+            <h2>⚽ เพิ่มผลการแข่งขัน</h2>
+            <form id="add-match-form">
+                <div class="match-inputs">
+                    <select id="home-team" required></select>
+                    <input type="number" id="home-score" min="0" required placeholder="สกอร์">
+                    <span>-</span>
+                    <input type="number" id="away-score" min="0" required placeholder="สกอร์">
+                    <select id="away-team" required></select>
+                </div>
+                <button type="submit">บันทึกผล</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="nav.js"></script>
+    <script src="data-handler.js"></script>
+    <script src="script-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+/* --- Google Fonts & Variables --- */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
+
+:root {
+    --primary-color: #1d3557;
+    --secondary-color: #457b9d;
+    --accent-color: #e63946;
+    --bg-color: #f1faee;
+    --card-bg-color: #ffffff;
+    --text-color: #000;
+    --light-text-color: #ffffff;
+    
+    /* เพิ่มตัวแปรสำหรับขนาดตัวอักษรที่ยืดหยุ่น */
+    --font-size-base: 1rem; /* 16px */
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.8rem;
+    --font-size-xxl: 2.2rem;
+}
+
+/* --- Base Styles --- */
+body {
+    font-family: 'Kanit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding-top: 70px; /* Space for fixed navbar */
+    font-size: var(--font-size-base);
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 20px; /* ใช้ padding ซ้าย-ขวาแทนการกำหนด width ตายตัว */
+}
+
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h1, h2 {
+    color: var(--primary-color);
+    text-align: center;
+}
+
+/* --- Navbar --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg-color);
+    padding: 0 1rem; /* ใช้ rem เพื่อให้ยืดหยุ่น */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.nav-branding {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-link.active, .nav-link:hover {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+}
+
+/* --- Card & Forms --- */
+.card {
+    background-color: var(--card-bg-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-top: 20px;
+}
+
+.match-inputs {
+    display: flex;
+    flex-wrap: wrap; /* ทำให้ปัดบรรทัดได้ถ้าที่แคบมาก */
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.match-inputs select, .match-inputs input {
+    flex-grow: 1; /* ทำให้ input ขยายตัวเต็มพื้นที่ */
+    min-width: 80px; /* กำหนดความกว้างขั้นต่ำ */
+    padding: 10px;
+    font-family: 'Kanit', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+form button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    font-size: 1rem;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* --- League Table --- */
+.league-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    overflow-x: auto; /* *** เพิ่ม: ทำให้ตารางเลื่อนซ้าย-ขวาได้ถ้าล้นจอจริงๆ *** */
+}
+.league-table th { background-color: var(--secondary-color); color: var(--light-text-color); }
+.league-table th, .league-table td { padding: 12px; text-align: center; white-space: nowrap; /* ป้องกันการตัดคำในตาราง */ }
+.league-table td:nth-child(2) { text-align: left; font-weight: bold; }
+.league-table tbody tr:nth-child(even) { background-color: #f8f8f8; }
+
+/* --- Match List Page --- */
+#match-list .match-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    font-size: var(--font-size-lg);
+}
+.match-info { flex-grow: 1; text-align: center; }
+.delete-match-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; color: #aaa; }
+.delete-match-btn:hover { color: var(--accent-color); }
+.admin-zone { text-align: center; margin-top: 30px; }
+#reset-data-button { background-color: var(--accent-color); color: white; padding: 10px 15px; border:none; border-radius: 5px; cursor:pointer;}
+
+
+/* --- Team Stats Page --- */
+#team-stats-container {
+    display: grid;
+    /* *** ปรับปรุง: ให้ยืดหยุ่นกับจอเล็กมากๆได้ดีขึ้น *** */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+.team-stat-card {
+    background-color: var(--card-bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 5px solid var(--secondary-color);
+}
+.team-stat-card h3 { margin-top: 0; color: var(--primary-color); }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-item span { display: block; }
+.stat-item .label { font-size: 0.9em; color: #666; }
+.stat-item .value { font-size: 1.2em; font-weight: bold; }
+.form-viz { display: flex; gap: 5px; margin-top: 10px; }
+.form-viz span {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-block;
+}
+.form-W { background-color: #2a9d8f; } /* Win */
+.form-D { background-color: #e9c46a; } /* Draw */
+.form-L { background-color: var(--accent-color); } /* Loss */
+
+/* ================================= */
+/* Responsive Breakpoint 1: Tablets & Phones */
+/* ================================= */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 60px; /* Height of navbar */
+        flex-direction: column;
+        background-color: var(--card-bg-color);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        gap: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .nav-menu.active { left: 0; }
+    .nav-item { margin: 16px 0; }
+    .hamburger { display: block; }
+    .hamburger.active .bar:nth-child(2) { opacity: 0; }
+    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    
+    #match-list .match-card { flex-direction: column; gap: 10px; }
+    .match-info { display: flex; justify-content: space-around; width: 100%;}
+    
+    .stat-grid { grid-template-columns: 1fr; }
+
+    /* ซ่อนคอลัมน์ในตารางสำหรับจอขนาดกลาง */
+    .league-table th:nth-child(6), .league-table td:nth-child(6) { /* Hide Loss */
+        display: none;
+    }
+}
+
+/* ================================= */
+/* *** ใหม่: Responsive Breakpoint 2: Small Phones *** */
+/* ================================= */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px; /* ลดความสูง Navbar */
+    }
+    
+    h1 { font-size: var(--font-size-xl); }
+    h2 { font-size: var(--font-size-lg); }
+    
+    .container { padding: 0 10px; }
+    
+    .card, .team-stat-card {
+        padding: 1rem;
+    }
+
+    .match-inputs {
+        flex-direction: column;
+    }
+
+    /* ซ่อนคอลัมน์เพิ่มสำหรับจอเล็กมาก */
+    .league-table th:nth-child(7), .league-table td:nth-child(7), /* Hide GF */
+    .league-table th:nth-child(8), .league-table td:nth-child(8) { /* Hide GA */
+        display: none;
+    }
+
+    .match-info { font-size: var(--font-size-base); }
+}
