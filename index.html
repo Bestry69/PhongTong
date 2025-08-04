@@ -3,54 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางคะแนน | ลีกเฝรั่งบ้านนอก</title>
-    <link rel="stylesheet" href="style.css">
+    <title>บ้านนอก เกมลีก</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Krub:wght@400;500;600;700&display=swap');
+        :root{--bg-color:#fdf6e3;--card-bg:#fffbf0;--text-color:#584c40;--primary-color:#b58900;--green:#859900;--red:#dc322f;--blue:#268bd2;}
+        body{font-family:'Krub',sans-serif;background-color:var(--bg-color);color:var(--text-color);margin:0;padding:20px;display:flex;flex-direction:column;align-items:center;}
+        .header{text-align:center;margin-bottom:30px;}.header h1{font-size:3rem;color:var(--primary-color);text-shadow:2px 2px 0 #fffbf0;margin:0;}.header p{font-size:1.2rem;color:var(--secondary-color);margin-top:5px;}
+        .leaderboard{width:100%;max-width:600px;display:flex;flex-direction:column;gap:15px;}
+        .player-card{background-color:var(--card-bg);border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08);padding:15px 20px;display:flex;align-items:center;gap:15px;transition:all .3s ease-in-out;}
+        .player-card:first-child{border:2px solid var(--primary-color);transform:scale(1.02);}
+        .rank{font-size:1.5rem;font-weight:700;color:var(--primary-color);width:40px;text-align:center;}
+        .player-info{flex-grow:1;}.player-name{font-size:1.5rem;font-weight:600;}.player-stats{font-size:.9rem;opacity:.8;}
+        .score{font-size:2rem;font-weight:700;min-width:60px;text-align:right;transition:color .3s;}
+        .controls{display:flex;gap:8px;margin-left:auto;}.controls button{font-family:'Krub',sans-serif;font-weight:600;border:none;border-radius:8px;width:40px;height:40px;font-size:1.2rem;cursor:pointer;transition:all .2s;}
+        .controls button:hover{transform:translateY(-2px);}.btn-add{background-color:var(--green);color:white;}.btn-add-5{background-color:var(--blue);color:white;}.btn-sub{background-color:var(--red);color:white;}.btn-game{background-color:#6c757d;color:white;font-size:.8rem;width:auto;padding:0 10px;}
+        #reset-btn{margin-top:30px;padding:12px 25px;font-size:1.1rem;font-weight:600;background-color:var(--red);color:white;border:none;border-radius:8px;cursor:pointer;transition:background-color .3s;}
+        #reset-btn:hover{background-color:#c02b28;}
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <a href="index.html" class="nav-branding">🏆 ลีกฝรั่งบ้านนอก</a>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="index.html" class="nav-link active">ตารางคะแนน</a></li>
-                <li class="nav-item"><a href="matches.html" class="nav-link">ผลการแข่ง</a></li>
-                <li class="nav-item"><a href="teams.html" class="nav-link">สถิติทีม</a></li>
-            </ul>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-        </nav>
+
+    <header class="header">
+        <h1>บ้านนอก บอร์ดเกมลีก</h1>
+        <p>ตารางคะแนน Real-time สำหรับทุกคน</p>
     </header>
 
-    <main class="container">
-        <h1>ตารางคะแนน</h1>
-        <table class="league-table">
-            <thead>
-                <tr>
-                    <th>#</th><th>ทีม</th><th>แข่ง</th><th>ชนะ</th><th>เสมอ</th><th>แพ้</th><th>ได้</th><th>เสีย</th><th>+/-</th><th>คะแนน</th>
-                </tr>
-            </thead>
-            <tbody id="league-table-body"></tbody>
-        </table>
-
-        <div class="card">
-            <h2>⚽ เพิ่มผลการแข่งขัน</h2>
-            <form id="add-match-form">
-                <div class="match-inputs">
-                    <select id="home-team" required></select>
-                    <input type="number" id="home-score" min="0" required placeholder="สกอร์">
-                    <span>-</span>
-                    <input type="number" id="away-score" min="0" required placeholder="สกอร์">
-                    <select id="away-team" required></select>
-                </div>
-                <button type="submit">บันทึกผล</button>
-            </form>
-        </div>
+    <main class="leaderboard" id="leaderboard">
+        <p>กำลังโหลดข้อมูลจากเซิร์ฟเวอร์...</p>
     </main>
 
-    <script src="nav.js"></script>
-    <script src="data-handler.js"></script>
-    <script src="script-index.js"></script>
+    <button id="reset-btn">รีเซ็ตคะแนนทั้งหมด</button>
+
+    <audio id="score-sound" src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-the-sound-pack-tree/tspt_interface_button_select_02_072.mp3" preload="auto"></audio>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+
+    <script>
+        // 2. วางโค้ด firebaseConfig ของคุณที่คัดลอกมาตรงนี้!
+        const firebaseConfig = {
+            apiKey: "AIza...",
+            authDomain: "your-project-id.firebaseapp.com",
+            // ... วางส่วนที่เหลือทั้งหมด
+        };
+
+        // 3. เริ่มต้นการเชื่อมต่อ Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // อ้างอิงไปยัง document ที่เราสร้างไว้ในขั้นตอนที่ 1
+        const leagueDocRef = db.collection('leagues').doc('banNokLeague');
+
+        // --- ส่วนควบคุม HTML ---
+        const leaderboard = document.getElementById('leaderboard');
+        const resetButton = document.getElementById('reset-btn');
+        const scoreSound = document.getElementById('score-sound');
+        
+        let players = []; // ตัวแปรสำหรับเก็บข้อมูลผู้เล่นล่าสุด
+
+        // --- ฟังก์ชันหลัก ---
+
+        // 1. ฟังก์ชัน Render: สร้างหน้าจอจากข้อมูลผู้เล่น (เหมือนเดิม)
+        function renderLeaderboard() {
+            if (players.length === 0) return;
+            players.sort((a, b) => b.score - a.score);
+            leaderboard.innerHTML = '';
+            players.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                playerCard.innerHTML = `
+                    <div class="rank">#${index + 1}</div>
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-stats">เกมที่เล่น: ${player.games}</div>
+                    </div>
+                    <div class="score" id="score-${player.id}">${player.score}</div>
+                    <div class="controls">
+                        <button class="btn-add-5" data-id="${player.id}" data-action="add" data-amount="5">+5</button>
+                        <button class="btn-add" data-id="${player.id}" data-action="add" data-amount="1">+1</button>
+                        <button class="btn-sub" data-id="${player.id}" data-action="subtract" data-amount="1">-1</button>
+                        <button class="btn-game" data-id="${player.id}" data-action="add_game">เพิ่มเกม</button>
+                    </div>
+                `;
+                leaderboard.appendChild(playerCard);
+            });
+        }
+        
+        // 2. ฟังก์ชันจัดการเมื่อกดปุ่ม (แก้ไขเล็กน้อย)
+        leaderboard.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') return;
+
+            const id = parseInt(e.target.dataset.id);
+            const action = e.target.dataset.action;
+            const amount = parseInt(e.target.dataset.amount);
+            
+            // หา index ของผู้เล่นใน array ปัจจุบัน
+            const playerIndex = players.findIndex(p => p.id === id);
+            if (playerIndex === -1) return;
+
+            if (action === 'add') {
+                players[playerIndex].score += amount;
+                playScoreSound();
+            } else if (action === 'subtract') {
+                players[playerIndex].score -= amount;
+            } else if (action === 'add_game') {
+                players[playerIndex].games++;
+            }
+            
+            // บันทึกข้อมูลอาร์เรย์ทั้งหมดกลับไปที่ Firebase
+            updateDataOnFirebase();
+        });
+        
+        // 3. ฟังก์ชันสำหรับอัปเดตข้อมูลบน Firebase
+        function updateDataOnFirebase() {
+            leagueDocRef.update({
+                players: players
+            }).catch(error => {
+                console.error("Error updating document: ", error);
+            });
+        }
+
+        // 4. ฟังก์ชันรีเซ็ต (แก้ไขให้รีเซ็ตข้อมูลบน Firebase)
+        resetButton.addEventListener('click', () => {
+            if (confirm('คุณแน่ใจหรือไม่ว่าจะล้างคะแนนทั้งหมด? (ทุกคนจะเห็นผลทันที)')) {
+                 const initialPlayers = [
+                    { id: 1, name: 'เบส', score: 0, games: 0 },
+                    { id: 2, name: 'เพชร', score: 0, games: 0 },
+                    { id: 3, name: 'ปาล์ม', score: 0, games: 0 },
+                    { id: 4, name: 'ทิว', score: 0, games: 0 },
+                    { id: 5, name: 'โอแคท', score: 0, games: 0 }
+                ];
+                players = initialPlayers;
+                updateDataOnFirebase();
+            }
+        });
+
+        function playScoreSound() {
+            scoreSound.currentTime = 0;
+            scoreSound.play();
+        }
+
+        // --- จุดสำคัญที่สุด: การรับข้อมูลแบบ Real-time ---
+        leagueDocRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                console.log("ได้รับข้อมูลอัปเดต:", doc.data());
+                players = doc.data().players; // อัปเดตข้อมูลผู้เล่นล่าสุด
+                renderLeaderboard(); // วาดหน้าจอใหม่ทุกครั้งที่มีการเปลี่ยนแปลง
+            } else {
+                console.log("ไม่พบ document!");
+                leaderboard.innerHTML = '<p>เกิดข้อผิดพลาด: ไม่พบข้อมูลลีกในฐานข้อมูล</p>';
+            }
+        });
+
+    </script>
 </body>
 </html>
