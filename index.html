@@ -3,157 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บ้านนอก เกมลีก</title>
+    <title>สำหรับคนสำคัญ...</title>
+    <link rel="icon" href="OUM.png" type="image/png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Krub:wght@400;500;600;700&display=swap');
-        :root{--bg-color:#fdf6e3;--card-bg:#fffbf0;--text-color:#584c40;--primary-color:#b58900;--green:#859900;--red:#dc322f;--blue:#268bd2;}
-        body{font-family:'Krub',sans-serif;background-color:var(--bg-color);color:var(--text-color);margin:0;padding:20px;display:flex;flex-direction:column;align-items:center;}
-        .header{text-align:center;margin-bottom:30px;}.header h1{font-size:3rem;color:var(--primary-color);text-shadow:2px 2px 0 #fffbf0;margin:0;}.header p{font-size:1.2rem;color:var(--secondary-color);margin-top:5px;}
-        .leaderboard{width:100%;max-width:600px;display:flex;flex-direction:column;gap:15px;}
-        .player-card{background-color:var(--card-bg);border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.08);padding:15px 20px;display:flex;align-items:center;gap:15px;transition:all .3s ease-in-out;}
-        .player-card:first-child{border:2px solid var(--primary-color);transform:scale(1.02);}
-        .rank{font-size:1.5rem;font-weight:700;color:var(--primary-color);width:40px;text-align:center;}
-        .player-info{flex-grow:1;}.player-name{font-size:1.5rem;font-weight:600;}.player-stats{font-size:.9rem;opacity:.8;}
-        .score{font-size:2rem;font-weight:700;min-width:60px;text-align:right;transition:color .3s;}
-        .controls{display:flex;gap:8px;margin-left:auto;}.controls button{font-family:'Krub',sans-serif;font-weight:600;border:none;border-radius:8px;width:40px;height:40px;font-size:1.2rem;cursor:pointer;transition:all .2s;}
-        .controls button:hover{transform:translateY(-2px);}.btn-add{background-color:var(--green);color:white;}.btn-add-5{background-color:var(--blue);color:white;}.btn-sub{background-color:var(--red);color:white;}.btn-game{background-color:#6c757d;color:white;font-size:.8rem;width:auto;padding:0 10px;}
-        #reset-btn{margin-top:30px;padding:12px 25px;font-size:1.1rem;font-weight:600;background-color:var(--red);color:white;border:none;border-radius:8px;cursor:pointer;transition:background-color .3s;}
-        #reset-btn:hover{background-color:#c02b28;}
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500&display=swap');
+        :root{--bg-color:#fde2e4;--text-color:#5d4a4a;--heart-color:#ff758f;--heart-shadow:#ffc2d1;--button-bg:#fff;--button-text:#ff758f;--green:#28a745;--red:#dc3545;}
+        body{font-family:'Mitr',sans-serif;background-color:var(--bg-color);color:var(--text-color);margin:0;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;transition:background-color 1s;}
+        
+        /* --- Pre-loader --- */
+        #preloader{position:fixed;top:0;left:0;width:100%;height:100%;background-color:var(--bg-color);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity .75s ease;}
+        #preloader.hidden{opacity:0;pointer-events:none;}
+        .heartbeat-loader{width:100px;height:100px;background-color:var(--heart-color);position:relative;transform:rotate(45deg);animation:heartbeat-loader-anim 1.2s ease-in-out infinite;}
+        .heartbeat-loader::before,.heartbeat-loader::after{content:'';width:100px;height:100px;background-color:var(--heart-color);border-radius:50%;position:absolute;}
+        .heartbeat-loader::before{top:0;left:-50px;} .heartbeat-loader::after{top:-50px;left:0;}
+        @keyframes heartbeat-loader-anim{0%,100%{transform:scale(1) rotate(45deg);}50%{transform:scale(1.1) rotate(45deg);}}
+
+        /* --- Main Content --- */
+        #main-content{text-align:center;padding:20px;opacity:0;transition:opacity .75s ease;}
+        #main-content.visible{opacity:1;}
+        #heart-container{position:relative;width:200px;height:200px;margin:0 auto 30px auto;transition:transform 1s cubic-bezier(.68,-.55,.27,1.55);}
+        .heart-piece{position:absolute;width:100px;height:160px;background-color:var(--heart-color);border-radius:50px 50px 0 0;transition:transform 1s cubic-bezier(.68,-.55,.27,1.55);}
+        .left-heart{left:0;transform:rotate(-45deg) translateX(-20px) translateY(20px);transform-origin:bottom right;}
+        .right-heart{right:0;transform:rotate(45deg) translateX(20px) translateY(20px);transform-origin:bottom left;}
+        #heart-container.mended .left-heart{transform:rotate(-45deg) translateX(0) translateY(0);}
+        #heart-container.mended .right-heart{transform:rotate(45deg) translateX(0) translateY(0);}
+        #heart-container.mended{animation:heartbeat-main 1.5s ease-in-out infinite 1s;}
+        @keyframes heartbeat-main{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+        #message-display{min-height:60px;font-size:1.5rem;font-weight:500;margin-bottom:30px;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;}
+        #message-display.visible{opacity:1;transform:translateY(0);}
+        #action-button{font-family:'Mitr',sans-serif;font-size:1.2rem;font-weight:500;padding:15px 30px;border-radius:50px;border:2px solid var(--heart-color);background-color:var(--button-bg);color:var(--button-text);cursor:pointer;transition:all .3s;}
+        #action-button:hover{background-color:var(--heart-color);color:var(--button-bg);transform:translateY(-3px);box-shadow:0 4px 15px rgba(0,0,0,.1);}
+        #final-section{display:none;opacity:0;transition:opacity .5s;}
+        #final-section.visible{opacity:1;}
+        #final-section h2{margin-bottom:20px;}
+        .final-buttons{display:flex;justify-content:center;gap:20px;align-items:center;height:80px;}
+        .final-buttons button{font-family:'Mitr',sans-serif;font-size:1.2rem;font-weight:700;padding:15px 40px;border-radius:50px;border:none;color:white;cursor:pointer;transition: all .3s ease-in-out; flex-shrink: 0;}
+        .final-buttons button:hover{filter: brightness(1.1);}
+        #yes-btn{background-color:var(--green); transform-origin: center;}
+        #no-btn{background-color:var(--red);}
+        #success-message{display:none;font-size:2.5rem;color:var(--heart-color);transform:scale(0);animation:zoomIn .5s forwards 1s;}
+        @keyframes zoomIn{from{transform:scale(0);}to{transform:scale(1);}}
+        .falling-heart{position:absolute;top:-10vh;font-size:2rem;animation:fall linear infinite;}
+        @keyframes fall{to{transform:translateY(110vh);}}
+        body.celebration{background:linear-gradient(135deg,#fde2e4,#ffc2d1,#e4b1ff);}
+        body.celebration #heart-container{animation:super-heartbeat 1s ease-in-out infinite;}
+        @keyframes super-heartbeat{0%,100%{transform:scale(1.1);}50%{transform:scale(1.2);}}
     </style>
 </head>
 <body>
-
-    <header class="header">
-        <h1>บ้านนอก บอร์ดเกมลีก</h1>
-        <p>ตารางคะแนน Real-time สำหรับทุกคน</p>
-    </header>
-
-    <main class="leaderboard" id="leaderboard">
-        <p>กำลังโหลดข้อมูลจากเซิร์ฟเวอร์...</p>
-    </main>
-
-    <button id="reset-btn">รีเซ็ตคะแนนทั้งหมด</button>
-
-    <audio id="score-sound" src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-the-sound-pack-tree/tspt_interface_button_select_02_072.mp3" preload="auto"></audio>
+    <div id="preloader">
+        <div class="heartbeat-loader"></div>
+    </div>
+    <div id="main-content">
+        <div class="container">
+            <div id="heart-container">
+                <div class="heart-piece left-heart"></div>
+                <div class="heart-piece right-heart"></div>
+            </div>
+            <div id="message-display"></div>
+            <div id="controls">
+                <button id="action-button">ลองกดดูสิ</button>
+            </div>
+            <div id="final-section">
+                <h2 id="final-question">หายงอนนะ?</h2>
+                <div class="final-buttons">
+                    <button id="yes-btn">ดีกัน</button>
+                    <button id="no-btn">ยังไม่ดี</button>
+                </div>
+            </div>
+            <div id="success-message">
+                <p>เย้! คนอ้วนหายงอน ❤️</p>
+            </div>
+        </div>
+    </div>
     
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
-
     <script>
-        // 2. วางโค้ด firebaseConfig ของคุณที่คัดลอกมาตรงนี้!
-        const firebaseConfig = {
-            apiKey: "AIza...",
-            authDomain: "your-project-id.firebaseapp.com",
-            // ... วางส่วนที่เหลือทั้งหมด
-        };
+        const apologyMessages = ["เบสขอโทษนะ...","ที่ไม่คอ่ยตอบแชทอุ้มเลย","บางทีก็พูดไม่คิดไปบ้าง","แต่อยากให้รู้ว่าอุ้มคือคนสำคัญที่สุดนะ","ถึงแม้ไม่ได้ตอบแชทก็สำคัญอยู่ดี","จะรับฟังอุ้มให้มากขึ้น","เพราะมีคนจ่มแล้วอุ่นใจ","หัวใจดวงนี้มันจะเป็นของอุ้มเสมอ"];
+        const noButtonMessages = ["ยังไม่ดี", "แน่ใจนะ?", "อีกทีสิ...", "ลองคิดดีๆ", "จริงๆ หรอ?", "T_T", "ขอร้องล่ะ...", "นะนะนะ..."];
 
-        // 3. เริ่มต้นการเชื่อมต่อ Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        // อ้างอิงไปยัง document ที่เราสร้างไว้ในขั้นตอนที่ 1
-        const leagueDocRef = db.collection('leagues').doc('banNokLeague');
+        const preloader=document.getElementById('preloader'),mainContent=document.getElementById('main-content'),heartContainer=document.getElementById('heart-container'),messageDisplay=document.getElementById('message-display'),actionButton=document.getElementById('action-button'),finalSection=document.getElementById('final-section'),successMessage=document.getElementById('success-message'),yesBtn=document.getElementById('yes-btn'),noBtn=document.getElementById('no-btn');
+        let currentState = -1;
+        let noClickCount = 0;
 
-        // --- ส่วนควบคุม HTML ---
-        const leaderboard = document.getElementById('leaderboard');
-        const resetButton = document.getElementById('reset-btn');
-        const scoreSound = document.getElementById('score-sound');
+        window.addEventListener('load',()=>{setTimeout(()=>{preloader.classList.add('hidden');mainContent.classList.add('visible');showNextMessage();},2500);});
+        function showNextMessage(){currentState++;messageDisplay.classList.remove('visible');setTimeout(()=>{if(currentState<apologyMessages.length){messageDisplay.textContent=apologyMessages[currentState];messageDisplay.classList.add('visible');actionButton.textContent="แล้วก็...";}if(currentState===apologyMessages.length-1){actionButton.textContent="สุดท้ายนี้...";}if(currentState===apologyMessages.length){mendTheHeart();}},300);}
+        function mendTheHeart(){heartContainer.classList.add('mended');actionButton.style.display='none';messageDisplay.style.display='none';finalSection.style.display='block';setTimeout(()=>finalSection.classList.add('visible'),50);}
         
-        let players = []; // ตัวแปรสำหรับเก็บข้อมูลผู้เล่นล่าสุด
-
-        // --- ฟังก์ชันหลัก ---
-
-        // 1. ฟังก์ชัน Render: สร้างหน้าจอจากข้อมูลผู้เล่น (เหมือนเดิม)
-        function renderLeaderboard() {
-            if (players.length === 0) return;
-            players.sort((a, b) => b.score - a.score);
-            leaderboard.innerHTML = '';
-            players.forEach((player, index) => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                playerCard.innerHTML = `
-                    <div class="rank">#${index + 1}</div>
-                    <div class="player-info">
-                        <div class="player-name">${player.name}</div>
-                        <div class="player-stats">เกมที่เล่น: ${player.games}</div>
-                    </div>
-                    <div class="score" id="score-${player.id}">${player.score}</div>
-                    <div class="controls">
-                        <button class="btn-add-5" data-id="${player.id}" data-action="add" data-amount="5">+5</button>
-                        <button class="btn-add" data-id="${player.id}" data-action="add" data-amount="1">+1</button>
-                        <button class="btn-sub" data-id="${player.id}" data-action="subtract" data-amount="1">-1</button>
-                        <button class="btn-game" data-id="${player.id}" data-action="add_game">เพิ่มเกม</button>
-                    </div>
-                `;
-                leaderboard.appendChild(playerCard);
-            });
-        }
-        
-        // 2. ฟังก์ชันจัดการเมื่อกดปุ่ม (แก้ไขเล็กน้อย)
-        leaderboard.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'BUTTON') return;
-
-            const id = parseInt(e.target.dataset.id);
-            const action = e.target.dataset.action;
-            const amount = parseInt(e.target.dataset.amount);
+        // --- กลไกใหม่: ปุ่ม 'ไม่' ที่ทำให้ปุ่ม 'ใช่' เติบโต ---
+        noBtn.addEventListener('click', () => {
+            noClickCount++;
             
-            // หา index ของผู้เล่นใน array ปัจจุบัน
-            const playerIndex = players.findIndex(p => p.id === id);
-            if (playerIndex === -1) return;
+            // เพิ่มขนาดปุ่ม "ดีกัน"
+            const currentScale = yesBtn.style.transform ? parseFloat(yesBtn.style.transform.replace('scale(', '')) : 1;
+            const newScale = currentScale + 0.5;
+            yesBtn.style.transform = `scale(${newScale})`;
 
-            if (action === 'add') {
-                players[playerIndex].score += amount;
-                playScoreSound();
-            } else if (action === 'subtract') {
-                players[playerIndex].score -= amount;
-            } else if (action === 'add_game') {
-                players[playerIndex].games++;
-            }
-            
-            // บันทึกข้อมูลอาร์เรย์ทั้งหมดกลับไปที่ Firebase
-            updateDataOnFirebase();
-        });
-        
-        // 3. ฟังก์ชันสำหรับอัปเดตข้อมูลบน Firebase
-        function updateDataOnFirebase() {
-            leagueDocRef.update({
-                players: players
-            }).catch(error => {
-                console.error("Error updating document: ", error);
-            });
-        }
+            // เพิ่มขนาด font ในปุ่ม "ดีกัน" ด้วยเล็กน้อย
+            const currentFontSize = window.getComputedStyle(yesBtn).fontSize;
+            const newFontSize = parseFloat(currentFontSize) + 2;
+            yesBtn.style.fontSize = `${newFontSize}px`;
 
-        // 4. ฟังก์ชันรีเซ็ต (แก้ไขให้รีเซ็ตข้อมูลบน Firebase)
-        resetButton.addEventListener('click', () => {
-            if (confirm('คุณแน่ใจหรือไม่ว่าจะล้างคะแนนทั้งหมด? (ทุกคนจะเห็นผลทันที)')) {
-                 const initialPlayers = [
-                    { id: 1, name: 'เบส', score: 0, games: 0 },
-                    { id: 2, name: 'เพชร', score: 0, games: 0 },
-                    { id: 3, name: 'ปาล์ม', score: 0, games: 0 },
-                    { id: 4, name: 'ทิว', score: 0, games: 0 },
-                    { id: 5, name: 'โอแคท', score: 0, games: 0 }
-                ];
-                players = initialPlayers;
-                updateDataOnFirebase();
-            }
+            // เปลี่ยนข้อความบนปุ่ม "ยังไม่ดี"
+            noBtn.textContent = noButtonMessages[noClickCount % noButtonMessages.length];
         });
 
-        function playScoreSound() {
-            scoreSound.currentTime = 0;
-            scoreSound.play();
-        }
-
-        // --- จุดสำคัญที่สุด: การรับข้อมูลแบบ Real-time ---
-        leagueDocRef.onSnapshot((doc) => {
-            if (doc.exists) {
-                console.log("ได้รับข้อมูลอัปเดต:", doc.data());
-                players = doc.data().players; // อัปเดตข้อมูลผู้เล่นล่าสุด
-                renderLeaderboard(); // วาดหน้าจอใหม่ทุกครั้งที่มีการเปลี่ยนแปลง
-            } else {
-                console.log("ไม่พบ document!");
-                leaderboard.innerHTML = '<p>เกิดข้อผิดพลาด: ไม่พบข้อมูลลีกในฐานข้อมูล</p>';
-            }
-        });
-
+        // --- ฉากจบเมื่อกด "ดีกัน" ---
+        yesBtn.addEventListener('click',()=>{document.body.classList.add('celebration');finalSection.style.display='none';successMessage.style.display='block';createFallingHearts();});
+        function createFallingHearts(){setInterval(()=>{const heart=document.createElement('div');heart.classList.add('falling-heart');heart.innerHTML=['❤️','💖','💕','💗'][Math.floor(Math.random()*4)];heart.style.left=Math.random()*100+'vw';heart.style.animationDuration=Math.random()*2+3+'s';heart.style.opacity=Math.random();heart.style.fontSize=Math.random()*1.5+1+'rem';document.body.appendChild(heart);setTimeout(()=>{heart.remove();},5000);},200);}
+        actionButton.addEventListener('click',showNextMessage);
     </script>
 </body>
 </html>
